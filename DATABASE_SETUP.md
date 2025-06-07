@@ -11,8 +11,13 @@ DATABASE_URL="postgresql://postgres:ozcan.001@db.yetdiiehoyyajhvgizhc.supabase.c
 
 ## Solution
 
-### 1. Vercel Environment Variables
-The issue is likely that Vercel doesn't have access to your `.env` file. You need to set environment variables in Vercel:
+### 1. Fix Build Script (COMPLETED)
+Updated `package.json` to remove `prisma db push` from regular build:
+- Regular build: `prisma generate && next build`
+- Vercel build: `prisma generate && prisma db push --accept-data-loss && next build`
+
+### 2. Vercel Environment Variables (CRITICAL)
+The issue is that Vercel doesn't have access to your `.env` file. You need to set environment variables in Vercel:
 
 1. Go to your Vercel dashboard
 2. Navigate to your project
@@ -20,7 +25,12 @@ The issue is likely that Vercel doesn't have access to your `.env` file. You nee
 4. Add a new environment variable:
    - **Name**: `DATABASE_URL`
    - **Value**: `postgresql://postgres:ozcan.001@db.yetdiiehoyyajhvgizhc.supabase.co:5432/postgres`
-   - **Environment**: Production (and Preview if needed)
+   - **Environment**: Production, Preview, and Development
+
+### 3. Vercel Build Command (IMPORTANT)
+In Vercel dashboard, go to Settings → General → Build & Development Settings:
+- **Build Command**: Leave empty (will use package.json)
+- **Install Command**: `npm install`
 
 ### 2. Alternative: Use Supabase Environment Variables
 If you're using Supabase, you can get the connection string from your Supabase dashboard:

@@ -5,8 +5,9 @@
   "scripts": {
     "seed": "node prisma/seed.js",
     "dev": "next dev --turbopack",
-    "build": "prisma generate && prisma db push && next build",
+    "build": "prisma generate && next build",
     "postinstall": "prisma generate",
+    "build:vercel": "prisma generate && prisma db push --accept-data-loss && next build",
     "start": "next start",
     "lint": "next lint"
   },
