@@ -87,7 +87,7 @@ export default function Header() {
                     <div className="flex-shrink-0">
                         <Link
                             href="/"
-                            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+                            className="flex items-center hover:opacity-90 transition-opacity"
                             onClick={() => {
                                 // Ana sayfaya dönerken URL'yi temizle ve navigation event'i tetikle
                                 setTimeout(() => {
@@ -98,10 +98,14 @@ export default function Header() {
                                 }, 100)
                             }}
                         >
-                            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">B</span>
+                            <div className="flex items-center space-x-3">
+                                <img
+                                    src="/herbokolog2.png"
+                                    alt="HERBOKOLOG"
+                                    className="h-55 w-60 object-contain"
+                                />
+
                             </div>
-                            <span className="text-white font-bold text-xl hidden sm:block">Blog Sitesi</span>
                         </Link>
                     </div>
 
