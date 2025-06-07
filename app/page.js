@@ -21,18 +21,34 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    // Check URL for category filter
-    const urlParams = new URLSearchParams(window.location.search)
-    const categoryId = urlParams.get('categoryId')
+    // URL değişikliklerini dinle ve bloğları yenile
+    const handleUrlChange = () => {
+      const urlParams = new URLSearchParams(window.location.search)
+      const categoryId = urlParams.get('categoryId')
 
-    if (categoryId) {
-      const category = categories.find(c => c.id === parseInt(categoryId))
-      setSelectedCategory(category)
-    } else {
-      setSelectedCategory(null)
+      if (categoryId) {
+        const category = categories.find(c => c.id === parseInt(categoryId))
+        setSelectedCategory(category)
+      } else {
+        setSelectedCategory(null)
+      }
+
+      loadBlogs()
     }
 
-    loadBlogs()
+    // İlk yükleme
+    handleUrlChange()
+
+    // URL değişikliklerini dinle
+    window.addEventListener('popstate', handleUrlChange)
+
+    // Sayfa navigasyonu için custom event dinle
+    window.addEventListener('navigationChange', handleUrlChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange)
+      window.removeEventListener('navigationChange', handleUrlChange)
+    }
   }, [categories])
 
   const loadCategories = async () => {
@@ -47,20 +63,10 @@ export default function Home() {
     }
   }
 
-  useEffect(() => {
-    // Listen for URL changes
-    const handleUrlChange = () => {
-      loadBlogs()
-    }
-
-    window.addEventListener('popstate', handleUrlChange)
-    return () => window.removeEventListener('popstate', handleUrlChange)
-  }, [])
-
   const loadBlogs = async () => {
     try {
       setLoading(true)
-      // Get categoryId from URL if exists
+      // URL'den categoryId'yi al
       const urlParams = new URLSearchParams(window.location.search)
       const categoryId = urlParams.get('categoryId')
 
@@ -308,7 +314,18 @@ export default function Home() {
             <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-white mb-4">Kategoriler</h3>
               <div className="space-y-2">
-                <Link href="/" className="block text-blue-400 hover:text-blue-300 text-sm transition-colors">
+                <Link
+                  href="/"
+                  className="block text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                  onClick={() => {
+                    setTimeout(() => {
+                      if (window.location.pathname === '/') {
+                        window.history.replaceState({}, '', '/')
+                        window.dispatchEvent(new Event('navigationChange'))
+                      }
+                    }, 100)
+                  }}
+                >
                   📝 Tüm Konular
                 </Link>
                 {categories.map((category) => (
@@ -316,6 +333,14 @@ export default function Home() {
                     key={category.id}
                     href={category.slug ? `/category/${category.slug}` : `/?categoryId=${category.id}`}
                     className="block text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                    onClick={() => {
+                      if (!category.slug) {
+                        // Direct category filter için navigation event tetikle
+                        setTimeout(() => {
+                          window.dispatchEvent(new Event('navigationChange'))
+                        }, 100)
+                      }
+                    }}
                   >
                     {getCategoryIcon(category.name)} {category.name}
                   </Link>

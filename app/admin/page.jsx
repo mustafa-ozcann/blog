@@ -189,6 +189,23 @@ export default function AdminDashboard() {
                         </p>
                     </Link>
 
+                    <Link href="/admin/categories"
+                        className="block bg-gray-800 border border-gray-700 hover:border-gray-600 rounded-lg p-6 transition-all duration-200 group">
+                        <div className="flex items-center mb-4">
+                            <div className="p-3 bg-purple-600 rounded-full group-hover:bg-purple-700 transition-colors">
+                                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                </svg>
+                            </div>
+                            <h3 className="ml-4 text-xl font-semibold text-white group-hover:text-purple-400 transition-colors">
+                                Kategori Yönetimi
+                            </h3>
+                        </div>
+                        <p className="text-gray-400 group-hover:text-gray-300 transition-colors">
+                            Blog kategorilerini oluştur, düzenle ve yönet
+                        </p>
+                    </Link>
+
                     <Link href="/admin/users"
                         className="block bg-gray-800 border border-gray-700 hover:border-gray-600 rounded-lg p-6 transition-all duration-200 group">
                         <div className="flex items-center mb-4">

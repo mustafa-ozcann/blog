@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/prisma'
 import { verifyToken, getTokenFromHeader } from '../../../../lib/auth'
 
+export const runtime = 'nodejs'
+
 // Admin authentication check
 function checkAdminAuth(request) {
     const authHeader = request.headers.get('Authorization')

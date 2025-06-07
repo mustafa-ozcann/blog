@@ -1,10 +1,10 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { adminService } from '../../../services/admin'
 import { authService } from '../../../services/auth'
 
-export default function AdminBlogs() {
+function AdminBlogsContent() {
     const [blogs, setBlogs] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
@@ -294,5 +294,34 @@ export default function AdminBlogs() {
                 )}
             </div>
         </div>
+    )
+}
+
+// Loading component for Suspense
+function AdminBlogsLoading() {
+    return (
+        <div className="container mx-auto px-4 py-8">
+            <div className="animate-pulse">
+                <div className="h-8 bg-gray-700 rounded w-1/4 mb-8"></div>
+                <div className="space-y-4">
+                    {[...Array(5)].map((_, i) => (
+                        <div key={i} className="bg-gray-800 p-6 rounded-lg">
+                            <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+                            <div className="h-3 bg-gray-700 rounded w-1/2 mb-4"></div>
+                            <div className="h-3 bg-gray-700 rounded w-full"></div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+// Main component with Suspense wrapper
+export default function AdminBlogs() {
+    return (
+        <Suspense fallback={<AdminBlogsLoading />}>
+            <AdminBlogsContent />
+        </Suspense>
     )
 } 

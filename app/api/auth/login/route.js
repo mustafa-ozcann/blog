@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/prisma'
 import { verifyPassword, generateToken } from '../../../../lib/auth'
 
+export const runtime = 'nodejs'
+
 export async function POST(request) {
     try {
         const { email, password } = await request.json()

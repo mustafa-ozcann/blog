@@ -85,7 +85,19 @@ export default function Header() {
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <div className="flex-shrink-0">
-                        <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+                        <Link
+                            href="/"
+                            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+                            onClick={() => {
+                                // Ana sayfaya dönerken URL'yi temizle ve navigation event'i tetikle
+                                setTimeout(() => {
+                                    if (window.location.pathname === '/') {
+                                        window.history.replaceState({}, '', '/')
+                                        window.dispatchEvent(new Event('navigationChange'))
+                                    }
+                                }, 100)
+                            }}
+                        >
                             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                                 <span className="text-white font-bold text-lg">B</span>
                             </div>
@@ -96,33 +108,13 @@ export default function Header() {
                     {/* Desktop Navigation */}
                     <div className="hidden md:block">
                         <div className="ml-10 flex items-baseline space-x-8">
-                            <Link
-                                href="/blogs"
-                                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                            >
-                                Bloglar
-                            </Link>
-                            <Link
-                                href="/social"
-                                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                            >
-                                Sosyal
-                            </Link>
                             {isAuthenticated && user?.role === 'admin' && (
-                                <>
-                                    <Link
-                                        href="/admin"
-                                        className="text-orange-300 hover:text-orange-200 px-3 py-2 rounded-md text-sm font-medium transition-colors border border-orange-600 hover:border-orange-500"
-                                    >
-                                        Admin Panel
-                                    </Link>
-                                    <Link
-                                        href="/admin/categories"
-                                        className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                                    >
-                                        Kategoriler
-                                    </Link>
-                                </>
+                                <Link
+                                    href="/admin"
+                                    className="text-orange-300 hover:text-orange-200 px-3 py-2 rounded-md text-sm font-medium transition-colors border border-orange-600 hover:border-orange-500"
+                                >
+                                    Admin Panel
+                                </Link>
                             )}
                         </div>
                     </div>

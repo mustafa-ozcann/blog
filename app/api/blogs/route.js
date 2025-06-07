@@ -3,6 +3,8 @@ import { prisma } from '../../../lib/prisma'
 import { verifyToken, getTokenFromHeader } from '../../../lib/auth'
 import { createUniqueSlug, checkBlogSlugExists } from '../../../lib/utils'
 
+export const runtime = 'nodejs'
+
 // GET - Blogları listele
 export async function GET(request) {
     try {

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '../../../../../lib/prisma'
 import { verifyToken } from '../../../../../lib/auth'
 
+export const runtime = 'nodejs'
+
 // PUT - Kategori güncelle
 export async function PUT(request, { params }) {
     try {
@@ -40,17 +42,18 @@ export async function PUT(request, { params }) {
         }
 
         // Check if name already exists (excluding current category)
-        const nameConflict = await prisma.category.findFirst({
+        const allCategories = await prisma.category.findMany({
+            select: { id: true, name: true },
             where: {
-                name: {
-                    equals: name.trim(),
-                    mode: 'insensitive'
-                },
                 id: {
                     not: categoryId
                 }
             }
         })
+
+        const nameConflict = allCategories.find(cat =>
+            cat.name.toLowerCase() === name.trim().toLowerCase()
+        )
 
         if (nameConflict) {
             return NextResponse.json({ error: 'Bu kategori adı zaten kullanılıyor' }, { status: 409 })

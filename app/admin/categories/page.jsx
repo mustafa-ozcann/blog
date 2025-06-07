@@ -32,19 +32,25 @@ export default function AdminCategoriesPage() {
         try {
             setLoading(true)
             const token = localStorage.getItem('token')
+            console.log('Loading categories...')
             const response = await fetch('/api/admin/categories', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             })
 
+            console.log('Categories response status:', response.status)
             if (!response.ok) {
-                throw new Error('Kategoriler getirilemedi')
+                const errorData = await response.json().catch(() => ({}))
+                console.error('Categories error:', errorData)
+                throw new Error(errorData.error || 'Kategoriler getirilemedi')
             }
 
             const data = await response.json()
+            console.log('Categories loaded:', data)
             setCategories(data.categories)
         } catch (error) {
+            console.error('Load categories error:', error)
             setError(error.message)
         } finally {
             setLoading(false)
@@ -69,6 +75,10 @@ export default function AdminCategoriesPage() {
 
             const method = editingCategory ? 'PUT' : 'POST'
 
+            console.log('Making request to:', url)
+            console.log('Method:', method)
+            console.log('Form data:', formData)
+
             const response = await fetch(url, {
                 method,
                 headers: {
@@ -77,6 +87,9 @@ export default function AdminCategoriesPage() {
                 },
                 body: JSON.stringify(formData)
             })
+
+            console.log('Response status:', response.status)
+            console.log('Response ok:', response.ok)
 
             const data = await response.json()
 
