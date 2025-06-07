@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("user") // "user" veya "admin"
+  bio       String?  // Profil açıklaması
+  image     String?  // Profil fotoğrafı URL
+  title     String?  // Ünvan (örn: "Senior Developer", "Content Creator")
+  location  String?  // Konum bilgisi
+  website   String?  // Web sitesi URL
+  twitter   String?  // Twitter kullanıcı adı
+  linkedin  String?  // LinkedIn profil URL
+  github    String?  // GitHub kullanıcı adı
+  likesCount Int     @default(0) // Toplam beğeni sayısı
+  status    String   @default("active") // "active", "suspended", "banned"
+  timeoutUntil DateTime? // Geçici engelleme bitiş tarihi
+  bannedAt  DateTime? // Kalıcı engelleme tarihi
+  bannedReason String? // Engelleme sebebi
+  lastLoginAt DateTime? // Son giriş tarihi
+  posts     Post[]
+  messagesSent     Message[] @relation("SentMessages")
+  messagesReceived Message[] @relation("ReceivedMessages")
+  likes     Like[]   // Kullanıcının verdiği beğeniler
+  comments  Comment[] // Kullanıcının yaptığı yorumlar
+  views     View[]   // Kullanıcının yaptığı görüntülemeler
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Like {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  post   Post @relation(fields: [postId], references: [id])
+  postId Int
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, postId]) // Bir kullanıcı bir posta sadece bir beğeni verebilir
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  slug      String?  @unique // SEO-friendly URL slug
+  content   String
+  status    String   @default("pending") // pending | approved
+  likesCount Int     @default(0) // Toplam beğeni sayısı
+  viewsCount Int     @default(0) // Toplam görüntülenme sayısı
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  category  Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+  likes     Like[]   // Posta verilen beğeniler
+  comments  Comment[] // Posta yapılan yorumlar
+  views     View[]   // Posta yapılan görüntülemeler
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  from      User     @relation("SentMessages", fields: [fromUserId], references: [id])
+  fromUserId Int
+  to        User     @relation("ReceivedMessages", fields: [toUserId], references: [id])
+  toUserId   Int
+  createdAt DateTime @default(now())
+}
+
+model Comment {
+  id       Int    @id @default(autoincrement())
+  content  String
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+  post     Post   @relation(fields: [postId], references: [id])
+  postId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model View {
+  id       Int    @id @default(autoincrement())
+  user     User?  @relation(fields: [userId], references: [id])
+  userId   Int?   // Anonim görüntülemeler için null olabilir
+  post     Post   @relation(fields: [postId], references: [id])
+  postId   Int
+  ipAddress String? // Anonim kullanıcılar için IP adresi
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, postId]) // Bir kullanıcı bir posta sadece bir görüntüleme ekleyebilir
+}
+
+model Category {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  slug        String? @unique // SEO-friendly URL slug
+  description String?
+  posts       Post[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
